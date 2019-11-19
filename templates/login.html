@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block body %}
+
+
+<div class="wrapper fadeInDown">
+
+    <div id="formContent">
+      <!-- Login Form -->
+      <form action="/login" method="POST">
+        <input type="text" id="username" class="fadeIn first" name="username" placeholder="Usuario" autocomplete="username">
+        <input type="password" id="password" class="fadeIn second" name="password" placeholder="Contraseña" autocomplete="current-password">
+        <input type="submit" class="fadeIn third" value="Log In">
+        <div class="or-spacer">
+          <div class="mask"></div>
+        </div>
+      </form>
+        <div class="container-social">
+          <a class="btn btn-lg btn-google">
+            <i class="fab fa-google"></i>
+          </a>
+          <a class="btn btn-lg btn-facebook">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a class="btn btn-lg btn-twitter">
+            <i class="fab fa-twitter"></i>
+          </a>
+        </div>
+    </div>
+
+{% with messages = get_flashed_messages() %}
+   {% if messages %}
+
+    <div class="alert alert-danger alert-dismissible" role="alert" style="margin-top:20px;z-index:10;">
+      {{ messages[0] }}
+    </div>
+   {% endif %}
+{% endwith %}
+</div>
+{% endblock %}

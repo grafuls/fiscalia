@@ -1,0 +1,69 @@
+{% extends 'bootstrap/base.html' %}
+{% block head %}
+{{ super() }}
+
+<title> Fiscalia </title>
+<meta name="viewport" content="width=device-width">
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/offline-language-spanish.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/offline-theme-default.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-table.min.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-social.css') }}" type="text/css">
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.4.1.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/offline.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-table.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/all.min.js') }}"></script>
+<script src="https://kit.fontawesome.com/03fd7205e5.js"></script>
+{% endblock %}
+{% block body %}
+<nav class="navbar navbar-default navbar-expand-lg">
+    <div class="container-fluid">
+        <div class="navbar-header">
+           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigationbar" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+           </button>
+            {% if box_number %}
+            <a class="navbar-brand" href="{{ url_for('padron_box', box_number=box_number) }}">Padron
+                | MESA: {{ box_number }}
+            {% else %}
+            <a class="navbar-brand" href="{{ url_for('padron') }}">Padron
+            {% endif %}
+            </a>
+        </div>
+        <div class="collapse navbar-collapse" id="navigationbar">
+            <ul class="nav navbar-nav navbar-right">
+                {% if current_user.has_role("admin") %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('summary') }}">Resumen</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('totales') }}">Totales</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    {% if box_number %}
+                    <a class="nav-link" href="{{ url_for('telegram_box', box_number=box_number) }}">Escrutinio</a>
+                    {% else %}
+                    <a class="nav-link" href="{{ url_for('telegram') }}">Escrutinio</a>
+                    {% endif %}
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('contacts') }}">Contactos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('ayuda') }}">Info</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% block content %}
+{% endblock %}
+{% endblock %}

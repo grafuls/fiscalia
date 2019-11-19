@@ -1,0 +1,17 @@
+{% macro pagination_widget(pages, endpoint) %}
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        {% for p in pages %}
+        <li class="page-item {{p['class']}}">
+            <a href="{{ url_for(endpoint, box_number = p['href'], **kwargs) }}"
+                class="page-link"
+                aria-label={{p['page']}}>
+                <span aria-hidden="true">{{p['page_label'] | safe}}</span>
+                <span class="sr-only">{{p['page_label'] | safe}}</span>
+
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</nav>
+{% endmacro %}

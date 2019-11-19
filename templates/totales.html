@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+{% block content %}
+<script>
+    function submitTotal(field_id, value) {
+        $.ajax({
+            type: 'post',
+            data: {'field_id': field_id, 'value': value},
+            url: '/save_results',
+            dataType: 'json',
+        });
+
+    };
+
+    $(window).on('load', function() {
+        $(".table td").css("font-size", "12px");
+        $(".table th").css("font-size", "12px");
+        $(".table td").css("white-space", "normal");
+        $(".table td").css("text-align", "center");
+        $(".table th").css("text-align", "center");
+        $('td.result').css("font-size", "15px");
+
+        $('#edit').on('click', function() {
+            if ($("#edit").attr("aria-pressed")=="false") {
+                $("#edit").removeClass("btn-primary");
+                $("#edit").addClass("btn-outline-primary");
+            } else {
+                $("#edit").removeClass("btn-outline-primary");
+                $("#edit").addClass("btn-primary");
+            }
+        });
+
+        $('td.cansubmit').on('click',function(e){
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            $(this).attr('contentEditable','true');
+            // this mouseleave event will be fired when you leave the selected/focused td
+            $(this).mouseleave(function(e){
+                $(this).attr('contentEditable','false');
+                var field_id = $(this).attr('id')
+                submitTotal(field_id, $(this).text())
+
+                console.log($(this).attr('id'));
+            });
+            console.log($(this));
+        });
+
+        $('td.cansubmit').focusout(function(e){
+            e.stopPropagation();
+            console.log('Hello');
+        });
+
+    });
+</script>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <p>Totales Escrutinio Definitivo</p>
+        </div>
+    </div>
+</div>
+<br>
+<div class="table-wrapper">
+    <table
+        id="results"
+        class="table table-striped table-responsive table-sm"
+        data-toggle="bootstrap-table">
+        <thead>
+            <tr>
+                <th>Partidos</th>
+                <th>Pres. y Vice</th>
+                <th>Gob. y Vice</th>
+                <th>Diputados</th>
+                <th>Senador</th>
+                <th>Intendente</th>
+                <th>Concejales</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for party, candidates in results.items() %}
+            <tr>
+                <td>{{ party }}</td>
+
+                {% if candidates["president"].enabled %}
+                <td class="result">
+                    {{ candidates["president"].count }}
+                </td>
+                {% else %}
+                <td style='background-color: gray'></td>
+                {% endif %}
+
+                { % if candidates["gobernor"].enabled %}
+                <td class="result">
+                    { { candidates["gobernor"].count }}
+                </td>
+                { % else %}
+                <td style='background-color: gray'></td>
+                { % endif %}
+
+                {% if candidates["diputado"].enabled %}
+                <td class="result">
+                    {{ candidates["diputado"].count }}
+                </td>
+                {% else %}
+                <td style='background-color: gray'></td>
+                {% endif %}
+
+                { % if candidates["senador"].enabled %}
+                <td class="result">
+                    { { candidates["senador"].count }}
+                </td>
+                { % else %}
+                <td style='background-color: gray'></td>
+                { % endif %}
+
+                <td style='background-color: gray'></td>
+
+                { % if candidates["general"].enabled %}
+                <td class="result">
+                    { { candidates["general"].count }}
+                </td>
+                { % else %}
+                <td style='background-color: gray'></td>
+                { % endif %}
+
+            </tr>
+
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <table id="other" class="table table-striped table-responsive">
+        <tbody>
+            <tr>
+                <th>TIPO</th>
+                <th>Pres. y Vice</th>
+                <th>Gob. y Vice</th>
+                <th>Diputados</th>
+                <th>Senador</th>
+                <th>Intendente</th>
+                <th>Concejales</th>
+            </tr>
+            <tr>
+                <td>VOTOS EN BLANCO</td>
+
+                <td class="result">
+                    {{ other_results["blank"]["president"]["count"] }}
+                </td>
+
+                <td class="result">
+                    { { other_results["blank"]["gobernor"]["count"] }}
+                </td>
+
+                <td class="result">
+                    {{ other_results["blank"]["diputado"]["count"] }}
+                </td>
+
+                <td class="result">
+                    { { other_results["blank"]["senador"]["count"] }}
+                </td>
+
+                <td style='background-color: gray'></td>
+
+                <td class="result">
+                    { { other_results["blank"]["general"]["count"] }}
+                </td>
+
+            </tr>
+            <tr>
+                <td>VOTOS NULOS</td>
+
+                <td class="result">
+                    {{ other_results["nulled"]["president"]["count"] }}
+                </td>
+
+                <td class="result">
+                    { { other_results["nulled"]["gobernor"]["count"] }}
+                </td>
+
+                <td class="result">
+                    {{ other_results["nulled"]["diputado"]["count"] }}
+                </td>
+
+                <td class="result">
+                    { {  other_results["nulled"]["senador"]["count"] }}
+                </td>
+
+                <td style='background-color: gray'></td>
+
+                <td class="result">
+                    { { other_results["nulled"]["general"]["count"] }}
+                </td>
+
+            </tr>
+            <tr>
+                <td>VOTOS RECURRIDOS</td>
+
+                <td class="result">
+                    {{ other_results["recurrent"]["president"]["count"] }}
+                </td>
+
+                <td class="result">
+                    { { other_results["recurrent"]["gobernor"]["count"] }}
+                </td>
+
+                <td class="result">
+                    {{ other_results["recurrent"]["diputado"]["count"] }}
+                </td>
+
+                <td class="result">
+                    { { other_results["recurrent"]["senador"]["count"] }}
+                </td>
+
+                <td style='background-color: gray'></td>
+
+                <td class="result">
+                    { { other_results["recurrent"]["general"]["count"] }}
+                </td>
+
+            </tr>
+            <tr>
+                <td>VOTOS IMPUGNADOS</td>
+
+                <td class="result">
+                    {{ other_results["refuted"]["president"]["count"] }}
+                </td>
+
+                <td class="result">
+                    { { other_results["refuted"]["gobernor"]["count"] }}
+                </td>
+
+                <td class="result">
+                    {{ other_results["refuted"]["diputado"]["count"] }}
+                </td>
+
+                <td class="result">
+                    { { other_results["refuted"]["senador"]["count"] }}
+                </td>
+
+                <td style='background-color: gray'></td>
+
+                <td class="result">
+                    { { other_results["refuted"]["general"]["count"] }}
+                </td>
+
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+{% import "_macros.html" as macros %}
+{% block content %}
+<script>
+    function submitTotal(field_id, value) {
+        $.ajax({
+            type: 'post',
+            data: {'field_id': field_id, 'value': value},
+            url: '/save_results',
+            dataType: 'json',
+        });
+
+    };
+
+    $(window).on('load', function() {
+        $(".table td").css("font-size", "12px");
+        $(".table th").css("font-size", "12px");
+        $(".table td").css("white-space", "normal");
+        $(".table td").css("text-align", "center");
+        $(".table th").css("text-align", "center");
+        $('td.cansubmit').css("font-size", "15px");
+
+        $('#edit').on('click', function() {
+            if ($("#edit").attr("aria-pressed")=="false") {
+                $("#edit").removeClass("btn-primary");
+                $("#edit").addClass("btn-outline-primary");
+            } else {
+                $("#edit").removeClass("btn-outline-primary");
+                $("#edit").addClass("btn-primary");
+            }
+        });
+
+        $('td.cansubmit').on('click',function(e){
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            $(this).attr('contentEditable','true');
+            // this mouseleave event will be fired when you leave the selected/focused td
+            $(this).mouseleave(function(e){
+                $(this).attr('contentEditable','false');
+                var field_id = $(this).attr('id')
+                submitTotal(field_id, $(this).text())
+
+                console.log($(this).attr('id'));
+            });
+            console.log($(this));
+        });
+
+        $('td.cansubmit').focusout(function(e){
+            e.stopPropagation();
+            console.log('Hello');
+        });
+
+    });
+</script>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+                <p>Escrutinio definitivo</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            {% if current_user.has_role("admin") %}
+            {{ macros.pagination_widget(pages, 'telegram_box') }}
+            {% endif %}
+        </div>
+    </div>
+</div>
+<br>
+<div class="table-wrapper">
+    <table
+        id="results"
+        class="table table-striped table-responsive table-sm"
+        data-toggle="bootstrap-table">
+        <thead>
+            <tr>
+                <th>Partidos</th>
+                <th>Pres. y Vice</th>
+                <th>Gob. y Vice</th>
+                <th>Diputados</th>
+                <th>Senador</th>
+                <th>Intendente</th>
+                <th>Concejales</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for party in parties %}
+            <tr>
+                <td>{{ party.name }}</td>
+
+                {% if party.votes.president.enabled %}
+                <td class="cansubmit" contenteditable="true" id="{{ party.id }}.president" class="result">
+                    {{ party.votes.president.count }}
+                </td>
+                {% else %}
+                <td style='background-color: gray'></td>
+                {% endif %}
+
+                { % if party.votes.gobernor.enabled %}
+                <td class="cansubmit" contenteditable="true" id="{{ party.id }}.gobernor" class="result">
+                    { { party.votes.gobernor.count }}
+                </td>
+                { % else %}
+                <td style='background-color: gray'></td>
+                { % endif %}
+
+                {% if party.votes.diputado.enabled %}
+                <td class="cansubmit" contenteditable="true" id="{{ party.id }}.diputado">
+                    {{ party.votes.diputado.count }}
+                </td>
+                {% else %}
+                <td style='background-color: gray'></td>
+                {% endif %}
+
+                { % if party.votes.senador.enabled %}
+                <td class="cansubmit" contenteditable="true" id="{{ party.id }}.senador" class="result">
+                    { { party.votes.senador.count }}
+                </td>
+                { % else %}
+                <td style='background-color: gray'></td>
+                { % endif %}
+                <td>{ { party.votes.intendente.count }}</td>
+                <td style='background-color: gray'></td>
+
+                { % if party.votes.general.enabled %}
+                <td class="cansubmit" contenteditable="true" id="{{ party.id }}.general" class="result">
+                    { { party.votes.general.count }}
+                </td>
+                { % else %}
+                <td style='background-color: gray'></td>
+                { % endif %}
+            </tr>
+
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <table id="other" class="table table-striped table-responsive">
+        <tbody>
+            <tr>
+                <th>TIPO</th>
+                <th>Pres. y Vice</th>
+                <th>Gob. y Vice</th>
+                <th>Diputados</th>
+                <th>Senador</th>
+                <th>Intendente</th>
+                <th>Concejales</th>
+            </tr>
+            <tr>
+                <td>VOTOS EN BLANCO</td>
+
+                <td class="cansubmit" contenteditable="true" id="blank.{{ other_votes.id }}.president" class="result">
+                    {{ other_votes.blank.president.count }}
+                </td>
+
+                <td class="cansubmit" contenteditable="true" id="blank.{{ other_votes.id }}.gobernor" class="result">
+                    { { other_votes.blank.gobernor.count }}
+                </td>
+
+                <td class="cansubmit" contenteditable="true" id="blank.{{ other_votes.id }}.diputado" class="result">
+                    {{ other_votes.blank.diputado.count }}
+                </td>
+
+                <td class="cansubmit" contenteditable="true" id="blank.{{ other_votes.id }}.senador" class="result">
+                    { { other_votes.blank.senador.count }}
+                </td>
+
+
+                <td>{ { other_votes.blank.intendente.count }}</td>
+                <td style='background-color: gray'></td>
+
+                <td class="cansubmit" contenteditable="true" id="blank.{{ other_votes.id }}.general" class="result">
+                    { { other_votes.blank.general.count }}
+                </td>
+
+            </tr>
+            <tr>
+                <td>VOTOS NULOS</td>
+
+                <td class="cansubmit" contenteditable="true" id="nulled.{{ other_votes.id }}.president" class="result">
+                    {{ other_votes.nulled.president.count }}
+                </td>
+
+                <td class="cansubmit" contenteditable="true" id="nulled.{{ other_votes.id }}.gobernor" class="result">
+                    { { other_votes.nulled.gobernor.count }}
+                </td>
+
+                <td class="cansubmit" contenteditable="true" id="nulled.{{ other_votes.id }}.diputado" class="result">
+                    {{ other_votes.nulled.diputado.count }}
+                </td>
+
+                <td class="cansubmit" contenteditable="true" id="nulled.{{ other_votes.id }}.senador" class="result">
+                    { { other_votes.nulled.senador.count }}
+                </td>
+
+
+                <td>{ { other_votes.nulled.intendente.count }}</td>
+                <td style='background-color: gray'></td>
+
+                <td class="cansubmit" contenteditable="true" id="nulled.{{ other_votes.id }}.general" class="result">
+                    { { other_votes.nulled.general.count }}
+                </td>
+
+            </tr>
+            <tr>
+                <td>VOTOS RECURRIDOS</td>
+
+                <td class="cansubmit" contenteditable="true" id="recurrent.{{ other_votes.id }}.president" class="result">
+                    {{ other_votes.recurrent.president.count }}
+                </td>
+
+                <td class="cansubmit" contenteditable="true" id="recurrent.{{ other_votes.id }}.gobernor" class="result">
+                    { { other_votes.recurrent.gobernor.count }}
+                </td>
+
+                <td class="cansubmit" contenteditable="true" id="recurrent.{{ other_votes.id }}.diputado" class="result">
+                    {{ other_votes.recurrent.diputado.count }}
+                </td>
+
+                <td class="cansubmit" contenteditable="true" id="recurrent.{{ other_votes.id }}.senador" class="result">
+                    { { other_votes.recurrent.senador.count }}
+                </td>
+
+
+                <td>{{ other_votes.recurrent.intendente.count }}</td>
+                <td style='background-color: gray'></td>
+
+                <td class="cansubmit" contenteditable="true" id="recurrent.{{ other_votes.id }}.general" class="result">
+                    { { other_votes.recurrent.general.count }}
+                </td>
+
+            </tr>
+            <tr>
+                <td>VOTOS IMPUGNADOS</td>
+
+                <td class="cansubmit" contenteditable="true" id="refuted.{{ other_votes.id }}.president" class="result">
+                    {{ other_votes.refuted.president.count }}
+                </td>
+
+                <td class="cansubmit" contenteditable="true" id="refuted.{{ other_votes.id }}.gobernor" class="result">
+                    { { other_votes.refuted.gobernor.count }}
+                </td>
+
+                <td class="cansubmit" contenteditable="true" id="refuted.{{ other_votes.id }}.diputado" class="result">
+                    {{ other_votes.refuted.diputado.count }}
+                </td>
+
+                <td class="cansubmit" contenteditable="true" id="refuted.{{ other_votes.id }}.senador" class="result">
+                    { { other_votes.refuted.senador.count }}
+                </td>
+
+
+                <td>{ { other_votes.refuted.intendente.count }}</td>
+                <td style='background-color: gray'></td>
+
+                <td class="cansubmit" contenteditable="true" id="refuted.{{ other_votes.id }}.general" class="result">
+                    { { other_votes.refuted.general.count }}
+                </td>
+
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

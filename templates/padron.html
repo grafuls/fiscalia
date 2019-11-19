@@ -1,0 +1,200 @@
+{% extends 'base.html' %}
+{% import "_macros.html" as macros %}
+{% block content %}
+<script>
+function submitIntencion(intencion, order, box) {
+    if (intencion != "4") {
+        $("tr#tr"+order).addClass('tohide')
+
+    } else {
+        $("tr#tr"+order).removeClass('tohide')
+    }
+    $.ajax({
+        type: 'post',
+        data: {'intencion': intencion, 'box': box},
+        url: '/save_state/' + order,
+        dataType: 'json',
+    });
+
+};
+
+$(window).on('load', function() {
+    $(".tdorder").css("width","10%");
+    $(".tdedad").css("width","13%");
+    $(".tdintencion").css("width","25%");
+    $('#search').on('click', function () {
+        // Declare variables
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("padron");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 1; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (filter.length > 0) {
+                    if (txtValue.toUpperCase() == filter) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                } else {
+                    tr[i].style.display = "";
+                }
+            }
+        }
+    })
+    $('#remove').on('click', function () {
+        // Declare variables
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("myInput");
+        input.value = "";
+        table = document.getElementById("padron");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 1; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+                tr[i].style.display = "";
+            }
+        }
+        $("#ausentes").attr("aria-pressed","false")
+        $("#ausentes").removeClass("active")
+
+    })
+
+    $('#ausentes').on('click', function() {
+        if ($("#ausentes").attr("aria-pressed")=="false") {
+            $("tr.tohide").hide()
+        } else {
+            $("tr.tohide").show()
+        }
+    })
+});
+</script>
+<div class="container">
+	<div class="row">
+        <div class="col-lg-6">
+            <div id="custom-search-input">
+                <div class="input-group">
+                    <input id="myInput" type="text" class="input-lg" placeholder="# Orden ..." />
+                    <span class="input-group-btn">
+                        <button id="remove" class="btn btn-info btn-lg" type="button">
+                            <i class="glyphicon glyphicon-remove"></i>
+                        </button>
+                        <button id="search" class="btn btn-info btn-lg" type="button">
+                            <i class="glyphicon glyphicon-search"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+	</div>
+</div>
+<br>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <p>Filtro</p>
+            <button id="ausentes" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+                Ausentes
+            </button>
+        </div>
+        <div class="col-md-6">
+            {% if current_user.has_role("admin") %}
+            {{ macros.pagination_widget(pages, 'padron_box') }}
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+<br>
+{% with messages = get_flashed_messages() %}
+   {% if messages %}
+<div class="container">
+    <div class="col-md-6">
+        <div class="alert alert-danger alert-dismissible" role="alert">
+          {{ messages[0] }}
+        </div>
+    </div>
+</div>
+   {% endif %}
+{% endwith %}
+<div class="table-wrapper">
+    <table
+        id="padron"
+        class="table table-striped table-responsive table-sm"
+        data-toggle="bootstrap-table">
+        <thead>
+            <tr>
+                <th class="tdorder">#</th>
+                <th>Nombre</th>
+                <th class="tdedad">Edad</th>
+                <th class="tdintencion">Intencion</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for voter in padron %}
+            <tr id="tr{{ voter.order }}"
+            {% if enable_ultimate %}
+                {% if voter.ultimate_status == 3 %}
+                    class="warning tohide"
+                {% endif %}
+            {% else %}
+                {% if voter.status != 4 %}
+                    class="tohide"
+                {% endif %}
+            {% endif %}
+            >
+                <td class="tdorder">{{ voter.order }}</td>
+                <td>{{ voter.name }}</td>
+                <td class="tdedad">{{ voter.get_edad() }}</td>
+                {% if enable_ultimate %}
+                <td class="tdintencion">
+                    <select
+                            class="selectpicker"
+                            name="opcion{{voter.order}}"
+                            id="opcion{{voter.order}}"
+                            onchange="submitIntencion(this.value, {{voter.order}}, {{ voter.box.number }})">
+                        <option
+                            {% if voter.ultimate_status == 3 %}
+                            selected
+                            {% endif %}
+                                value="3">Voto</option>
+                        <option
+                            {% if voter.ultimate_status == 4 %}
+                            selected
+                            {% endif %}
+                                value="4">Ausente</option>
+                    </select>
+                </td>
+                {% else %}
+                <td class="tdintencion">
+                    <select
+                            class="selectpicker"
+                            name="opcion{{voter.order}}"
+                            id="opcion{{voter.order}}"
+                            onchange="submitIntencion(this.value, {{voter.order}}, {{ voter.box.number }})">
+                        <option
+                            {% if voter.status == 3 %}
+                            selected
+                            {% endif %}
+                                value="3">Voto</option>
+                        <option
+                            {% if voter.status == 4 %}
+                            selected
+                            {% endif %}
+                                value="4">Ausente</option>
+                    </select>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

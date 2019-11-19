@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+	<div class="row">
+        <div class="col-lg-6">
+            <div id="custom-search-input">
+                <div class="input-group">
+                    <input id="myInput" type="text" class="input-lg" placeholder="# Orden ..." />
+                    <span class="input-group-btn">
+                        <button id="remove" class="btn btn-info btn-lg" type="button">
+                            <i class="glyphicon glyphicon-remove"></i>
+                        </button>
+                        <button id="search" class="btn btn-info btn-lg" type="button">
+                            <i class="glyphicon glyphicon-search"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+	</div>
+</div>
+<br>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <p>Filtro</p>
+            <button id="ausentes" type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false" autocomplete="off">
+                Ausentes
+            </button>
+        </div>
+        <div class="col-md-6">
+            {% if current_user.has_role("admin") %}
+            {{ macros.pagination_widget(pages, 'padron_box') }}
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+<br>
+{% with messages = get_flashed_messages() %}
+   {% if messages %}
+<div class="container">
+    <div class="col-md-6">
+        <div class="alert alert-danger alert-dismissible" role="alert">
+          {{ messages[0] }}
+        </div>
+    </div>
+</div>
+   {% endif %}
+{% endwith %}
+<div class="table-wrapper">
+    <table
+        id="users"
+        class="table table-striped table-responsive table-sm"
+        data-toggle="bootstrap-table">
+        <thead>
+            <tr>
+                <th class="tdorder">#</th>
+                <th>Nombre</th>
+                <th>Direccion</th>
+                <th>Intencion</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for voter in padron %}
+            <tr id="tr{{ voter.order }}"
+            {% if voter.status != 4 %}
+                class="tohide"
+            {% endif %}
+            >
+                <td class="tdorder">{{ voter.order }}</td>
+                <td>{{ voter.name }}</td>
+                <td>{{ voter.address }}</td>
+                <td>
+                    <select
+                            class="selectpicker"
+                            name="opcion{{voter.order}}"
+                            id="opcion{{voter.order}}"
+                            onchange="submitIntencion(this.value, {{voter.order}}, {{ voter.box.number }})">
+                        <option
+                            {% if voter.status == 3 %}
+                            selected
+                            {% endif %}
+                                value="3">Voto</option>
+                        <option
+                            {% if voter.status == 4 %}
+                            selected
+                            {% endif %}
+                                value="4">Ausente</option>
+                    </select>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

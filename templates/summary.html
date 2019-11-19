@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Resources -->
+<script src="https://www.amcharts.com/lib/4/core.js"></script>
+<script src="https://www.amcharts.com/lib/4/charts.js"></script>
+<script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js'></script>
+
+<!-- Styles -->
+<style>
+#chartdiv {
+  width: 100%;
+  height: 400px;
+}
+
+</style>
+<!-- Chart code -->
+<script>
+am4core.ready(function() {
+
+// Themes begin
+am4core.useTheme(am4themes_animated);
+// Themes end
+
+// Create chart instance
+var chart = am4core.create("chartdiv", am4charts.PieChart);
+
+// Add data
+chart.data = [
+    {% for entry in data %}
+    {"intention": "{{ entry["intention"] }}", "count": {{ entry["count"] }}
+    {% if entry["intention"]=="Ausentes"  %}
+    ,"hidden": true
+    {% endif %}
+    },
+    {% endfor %}
+];
+
+// Add and configure Series
+var pieSeries = chart.series.push(new am4charts.PieSeries());
+pieSeries.dataFields.value = "count";
+pieSeries.dataFields.category = "intention";
+pieSeries.dataFields.hidden = "hidden";
+pieSeries.slices.template.stroke = am4core.color("#fff");
+pieSeries.slices.template.strokeWidth = 2;
+pieSeries.slices.template.strokeOpacity = 1;
+
+// This creates initial animation
+pieSeries.hiddenState.properties.opacity = 1;
+pieSeries.hiddenState.properties.endAngle = -90;
+pieSeries.hiddenState.properties.startAngle = -90;
+
+// Disable ticks and labels
+pieSeries.labels.template.disabled = true;
+pieSeries.ticks.template.disabled = true;
+
+// Disable tooltips
+pieSeries.slices.template.tooltipText = "";
+
+pieSeries.colors.list = [
+  {% for color in colors %}
+  am4core.color("{{ color }}"),
+  {% endfor %}
+];
+
+// Add a legend
+chart.legend = new am4charts.Legend();
+chart.legend.position = "bottom";
+
+chart.innerRadius = am4core.percent(40);
+}); // end am4core.ready()
+</script>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <p>Totales en vivo:</p>
+        </div>
+    </div>
+</div>
+<!-- HTML -->
+<div id="chartdiv"></div>
+<br>
+
+
+
+
+
+<!-- Styles -->
+<style>
+#chartdiv2 {
+  width: 100%;
+  height: 800px;
+}
+
+</style>
+
+<!-- Chart code -->
+<script>
+am4core.ready(function() {
+
+// Themes begin
+am4core.useTheme(am4themes_animated);
+// Themes end
+
+// Create chart instance
+var chart = am4core.create("chartdiv2", am4charts.XYChart);
+
+// Add data
+chart.data = [
+    {% for box in boxes %}
+    {
+        "number": {{ box["number"] }},
+        "voto": {{ box["voto"] }},
+        "ausentes": {{ box["ausentes"] }},
+    },
+    {%endfor%}
+];
+chart.colors.list = [
+  {% for color in colors %}
+  am4core.color("{{ color }}"),
+  {% endfor %}
+];
+chart.legend = new am4charts.Legend();
+chart.legend.position = "bottom";
+
+// Create axes
+var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
+categoryAxis.dataFields.category = "number";
+categoryAxis.renderer.grid.template.opacity = 0;
+
+var valueAxis = chart.xAxes.push(new am4charts.ValueAxis());
+valueAxis.min = 0;
+valueAxis.renderer.grid.template.opacity = 0;
+valueAxis.renderer.ticks.template.strokeOpacity = 0.5;
+valueAxis.renderer.ticks.template.stroke = am4core.color("#495C43");
+valueAxis.renderer.ticks.template.length = 10;
+valueAxis.renderer.line.strokeOpacity = 0.5;
+valueAxis.renderer.baseGrid.disabled = true;
+valueAxis.renderer.minGridDistance = 40;
+
+// Create series
+function createSeries(field, name) {
+  var series = chart.series.push(new am4charts.ColumnSeries());
+  series.dataFields.valueX = field;
+  series.dataFields.categoryY = "number";
+  if (field === "ausentes"){
+    series.hidden = true;
+  }
+  series.dataFields.hidden = "hidden";
+  series.stacked = true;
+  series.name = name;
+
+  var labelBullet = series.bullets.push(new am4charts.LabelBullet());
+  labelBullet.locationX = 0.5;
+  labelBullet.label.text = "{valueX}";
+  labelBullet.label.fill = am4core.color("#fff");
+}
+
+createSeries("voto", "Voto");
+createSeries("ausentes", "Ausentes");
+
+}); // end am4core.ready()
+</script>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <p>Detalle mesas:</p>
+        </div>
+    </div>
+</div>
+<!-- HTML -->
+<div id="chartdiv2"></div>
+
+{% endblock %}
