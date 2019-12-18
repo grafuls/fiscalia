@@ -20,7 +20,6 @@ function submitIntencion(intencion, order, box) {
 
 $(window).on('load', function() {
     $(".tdorder").css("width","10%");
-    $(".tdedad").css("width","13%");
     $(".tdintencion").css("width","25%");
     $('#search').on('click', function () {
         // Declare variables
@@ -132,8 +131,6 @@ $(window).on('load', function() {
         <thead>
             <tr>
                 <th class="tdorder">#</th>
-                <th>Nombre</th>
-                <th class="tdedad">Edad</th>
                 <th class="tdintencion">Intencion</th>
             </tr>
         </thead>
@@ -151,8 +148,6 @@ $(window).on('load', function() {
             {% endif %}
             >
                 <td class="tdorder">{{ voter.order }}</td>
-                <td>{{ voter.name }}</td>
-                <td class="tdedad">{{ voter.get_edad() }}</td>
                 {% if enable_ultimate %}
                 <td class="tdintencion">
                     <select
