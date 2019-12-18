@@ -128,7 +128,7 @@ def load_users():
 def init_app():
     try:
         app.logger.debug("Adding users")
-        load_users()
+        #load_users()
 
         app.logger.debug("Adding voters")
         if os.path.exists(f"{CIRCUIT}.csv"):
