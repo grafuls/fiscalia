@@ -23,6 +23,7 @@ VOTES_MATRIX = [
 
 CANDIDATES = ["president", "gobernor", "diputado", "senador", "intendente", "general"]
 CIRCUIT = "CIRCUITO"
+BOXES = [3112, 3113, 3114]
 USERS = [
     {
         "circuito": [CIRCUIT],
@@ -44,27 +45,27 @@ USERS = [
                 "clave": "J2U95S4V"
             },
             "fiscal_escuela_16": {
-                "boxes": [3112, 3113, 3114],
+                "boxes": BOXES,
                 "roles": ["escuela", "admin"],
                 "clave": "6DJ85567"
             },
             "general": {
-                "boxes": [3112, 3113, 3114],
+                "boxes": BOXES,
                 "roles": ["general", "admin"],
                 "clave": "Y7EB6KCP"
             },
             "candidato": {
-                "boxes": [3112, 3113, 3114],
+                "boxes": BOXES,
                 "roles": ["candidato", "admin"],
                 "clave": "S46XP6XN"
             },
             "admin": {
-                "boxes": [3112, 3113, 3114],
+                "boxes": BOXES,
                 "roles": ["admin"],
                 "clave": "admin"
             },
             "demo": {
-                "boxes": [3112, 3113, 3114],
+                "boxes": BOXES,
                 "roles": ["admin"],
                 "clave": "demo"
             },

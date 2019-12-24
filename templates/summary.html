@@ -112,6 +112,7 @@ chart.data = [
     {% for box in boxes %}
     {
         "number": {{ box["number"] }},
+        "recurrido": {{ box["recurrido"] }},
         "voto": {{ box["voto"] }},
         "ausentes": {{ box["ausentes"] }},
     },
@@ -158,6 +159,7 @@ function createSeries(field, name) {
   labelBullet.label.fill = am4core.color("#fff");
 }
 
+createSeries("recurrido", "Recurrido");
 createSeries("voto", "Voto");
 createSeries("ausentes", "Ausentes");
 

@@ -1,10 +1,8 @@
 import logging
 from datetime import datetime
-from urllib.parse import quote, quote_plus
 
 import mongoengine
-from flask import Flask, flash, render_template, request, Response, url_for, g, session, abort, make_response, \
-    send_from_directory
+from flask import Flask, flash, render_template, request, Response, url_for, g, session, abort, send_from_directory
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_principal import Permission, RoleNeed, AnonymousIdentity, identity_changed, Identity, Principal, \
@@ -18,7 +16,7 @@ from werkzeug.utils import redirect
 from helpers.flask_pager import Pager
 from helpers.helper import get_current_user_roles
 from model import db, Role, User, Voter, Circuit, Box, Party, Votes, Counter, OtherVotes
-from config import COLORS, SECRET, PARTIES, VOTES_MATRIX, CANDIDATES, USERS, ENABLE_ULTIMATE, DOMAIN, CIRCUIT
+from config import COLORS, SECRET, PARTIES, VOTES_MATRIX, CANDIDATES, USERS, ENABLE_ULTIMATE, DOMAIN, CIRCUIT, BOXES
 from concurrent.futures import ThreadPoolExecutor
 
 import os
@@ -128,50 +126,33 @@ def load_users():
 def init_app():
     try:
         app.logger.debug("Adding users")
-        #load_users()
+        load_users()
 
         app.logger.debug("Adding voters")
-        if os.path.exists(f"{CIRCUIT}.csv"):
-            with open(f"{CIRCUIT}.csv") as _f:
-                lines = _f.readlines()
-
-                for i, line in enumerate(lines):
-                    exploded = line.split('|')
-                    dni = int("".join(exploded[1].strip().split(".")))
-                    voter_obj = Voter.objects(
-                        order=exploded[0].strip(),
-                        name=exploded[3].strip(),
-                        dni=dni).first()
-                    if not voter_obj:
-                        app.logger.debug("%s - Adding voter: %s" % (i, exploded[3].strip()))
-
-                        circuit_obj = Circuit.objects(name=CIRCUIT).first()
-                        if not circuit_obj:
-                            circuit_obj = Circuit(name=CIRCUIT).save()
-                        box_obj = Box.objects(number=int(exploded[5].strip())).first()
-                        if not box_obj:
-                            box_obj = Box(number=int(exploded[5].strip()))
-                            load_votes_matrix(box_obj)
-                        try:
-                            Voter(
-                                order=exploded[0].strip(),
-                                name=exploded[3].strip(),
-                                dni=dni,
-                                category=exploded[2].strip(),
-                                address=exploded[4].strip(),
-                                type_dni="DNI",
-                                box=box_obj,
-                                circuit=circuit_obj,
-                            ).save()
-                        except mongoengine.errors.NotUniqueError:
-                            continue
+        for box in BOXES:
+            box_obj = Box.objects(number=box).first()
+            if not box_obj:
+                box_obj = Box(number=box)
+                load_votes_matrix(box_obj)
+            for i in range(1, 350 + 1):
+                voter_obj = Voter.objects(
+                    order=i,
+                    box=box_obj
+                ).first()
+                if not voter_obj:
+                    circuit_obj = Circuit.objects(name=CIRCUIT).first()
+                    if not circuit_obj:
+                        circuit_obj = Circuit(name=CIRCUIT).save()
+                    try:
+                        Voter(
+                            order=i,
+                            box=box_obj,
+                            circuit=circuit_obj,
+                        ).save()
+                    except mongoengine.errors.NotUniqueError:
+                        continue
     except Exception:
         app.logger.exception("There was something wrong with init.")
-
-    app.logger.debug("Loading votes matrix")
-    boxes = Box.objects()
-    for box in boxes:
-        load_votes_matrix(box)
 
     app.logger.debug("Done init")
 

@@ -91,17 +91,9 @@ class Box(db.Document):
 
 class Voter(db.Document):
     order = db.IntField()
-    name = db.StringField(max_length=80)
-    dni = db.LongField(unique=True)
-    category = db.IntField()
-    address = db.StringField(max_length=255)
-    location = GeoPointField()
-    type_dni = db.StringField()
     status = db.IntField(default=4)
-    ultimate_status = db.IntField(default=4)
     box = db.ReferenceField(Box)
     circuit = db.ReferenceField(Circuit)
-    located = db.BooleanField(default=False)
     last_updated = db.DateTimeField(default=datetime.now())
 
     meta = {
@@ -112,7 +104,3 @@ class Voter(db.Document):
         ],
         'strict': False
     }
-
-    def get_edad(self):
-        now = datetime.now()
-        return now.year - self.category

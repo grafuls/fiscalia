@@ -5,7 +5,6 @@
 function submitIntencion(intencion, order, box) {
     if (intencion != "4") {
         $("tr#tr"+order).addClass('tohide')
-
     } else {
         $("tr#tr"+order).removeClass('tohide')
     }
@@ -137,18 +136,11 @@ $(window).on('load', function() {
         <tbody>
             {% for voter in padron %}
             <tr id="tr{{ voter.order }}"
-            {% if enable_ultimate %}
-                {% if voter.ultimate_status == 3 %}
-                    class="warning tohide"
-                {% endif %}
-            {% else %}
-                {% if voter.status != 4 %}
-                    class="tohide"
-                {% endif %}
+            {% if voter.status != 4 %}
+                class="tohide"
             {% endif %}
             >
                 <td class="tdorder">{{ voter.order }}</td>
-                {% if enable_ultimate %}
                 <td class="tdintencion">
                     <select
                             class="selectpicker"
@@ -156,24 +148,10 @@ $(window).on('load', function() {
                             id="opcion{{voter.order}}"
                             onchange="submitIntencion(this.value, {{voter.order}}, {{ voter.box.number }})">
                         <option
-                            {% if voter.ultimate_status == 3 %}
+                            {% if voter.status == 2 %}
                             selected
                             {% endif %}
-                                value="3">Voto</option>
-                        <option
-                            {% if voter.ultimate_status == 4 %}
-                            selected
-                            {% endif %}
-                                value="4">Ausente</option>
-                    </select>
-                </td>
-                {% else %}
-                <td class="tdintencion">
-                    <select
-                            class="selectpicker"
-                            name="opcion{{voter.order}}"
-                            id="opcion{{voter.order}}"
-                            onchange="submitIntencion(this.value, {{voter.order}}, {{ voter.box.number }})">
+                                value="2">Recurrido</option>
                         <option
                             {% if voter.status == 3 %}
                             selected
@@ -186,7 +164,6 @@ $(window).on('load', function() {
                                 value="4">Ausente</option>
                     </select>
                 </td>
-                {% endif %}
             </tr>
             {% endfor %}
         </tbody>
