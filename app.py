@@ -130,6 +130,8 @@ def init_app():
 
         app.logger.debug("Adding voters")
         for box in BOXES:
+            app.logger.debug(f"Processing box: {box}")
+
             box_obj = Box.objects(number=box).first()
             if not box_obj:
                 box_obj = Box(number=box)
@@ -341,13 +343,7 @@ def export():
         for voter in voters:
             padron.append([
                 voter.order,
-                voter.name,
-                voter.dni,
-                voter.category,
-                voter.address,
-                voter.location,
                 voter.status,
-                voter.ultimate_status,
                 box.number,
             ])
     return render_template(
@@ -374,32 +370,24 @@ def summary():
     boxes = Box.objects(number__in=_filter).order_by("-number")
     custom_boxes = []
     for box in boxes:
-        if ENABLE_ULTIMATE:
-            custom_box = {
-                'number': box.number,
-                "voto": Voter.objects(box=box, ultimate_status=3).count(),
-                "ausentes": Voter.objects(box=box, ultimate_status=4).count()
-            }
-        else:
-            custom_box = {
-                'number': box.number,
-                "voto": Voter.objects(box=box, status=3).count(),
-                "ausentes": Voter.objects(box=box, status=4).count()
-            }
+        custom_box = {
+            'number': box.number,
+            "recurrido": Voter.objects(box=box, status=2).count(),
+            "voto": Voter.objects(box=box, status=3).count(),
+            "ausentes": Voter.objects(box=box, status=4).count()
+        }
 
         custom_boxes.append(custom_box)
-    if ENABLE_ULTIMATE:
-        votos_ns_nc = Voter.objects(ultimate_status=3, box__in=boxes).count()
-        votos_ausentes = Voter.objects(ultimate_status=4, box__in=boxes).count()
-    else:
-        votos_ns_nc = Voter.objects(status=3, box__in=boxes).count()
-        votos_ausentes = Voter.objects(status=4, box__in=boxes).count()
+    votos_recurrido = Voter.objects(status=2, box__in=boxes).count()
+    votos_ns_nc = Voter.objects(status=3, box__in=boxes).count()
+    votos_ausentes = Voter.objects(status=4, box__in=boxes).count()
     data = [
+        {"intention": "Recurrido", "count": votos_recurrido},
         {"intention": "Voto", "count": votos_ns_nc},
         {"intention": "Ausentes", "count": votos_ausentes},
     ]
-    values = [votos_ns_nc, votos_ausentes]
-    labels = ["Voto", "Ausentes"]
+    values = [votos_recurrido, votos_ns_nc, votos_ausentes]
+    labels = ["Recurrido", "Voto", "Ausentes"]
 
     return render_template(
         'summary.html',
@@ -507,10 +495,7 @@ def save_state(order):
     app.logger.debug("Saving order: %s" % order)
     box = Box.objects(number=request.form.get("box")).first()
     voter = Voter.objects(order=order, box=box).first()
-    if ENABLE_ULTIMATE:
-        voter.update(ultimate_status=request.form.get("intencion"), last_updated=datetime.now())
-    else:
-        voter.update(status=request.form.get("intencion"), last_updated=datetime.now())
+    voter.update(status=request.form.get("intencion"), last_updated=datetime.now())
     return Response(status=200)
 
 
