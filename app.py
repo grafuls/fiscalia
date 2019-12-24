@@ -130,6 +130,8 @@ def init_app():
 
         app.logger.debug("Adding voters")
         for box in BOXES:
+            app.logger.debug(f"Processing box: {box}")
+
             box_obj = Box.objects(number=box).first()
             if not box_obj:
                 box_obj = Box(number=box)
