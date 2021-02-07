@@ -16,7 +16,7 @@ from werkzeug.utils import redirect
 from helpers.flask_pager import Pager
 from helpers.helper import get_current_user_roles
 from model import db, Role, User, Voter, Circuit, Box, Party, Votes, Counter, OtherVotes
-from config import COLORS, SECRET, PARTIES, VOTES_MATRIX, CANDIDATES, USERS, ENABLE_ULTIMATE, DOMAIN, CIRCUIT, BOXES
+from config import COLORS, SECRET, PARTIES, VOTES_MATRIX, CANDIDATES, USERS, DOMAIN, CIRCUIT, BOXES
 from concurrent.futures import ThreadPoolExecutor
 
 import os
@@ -327,7 +327,6 @@ def padron_box(box_number):
             padron=_padron,
             pages=pages,
             box_number=box_number,
-            enable_ultimate=ENABLE_ULTIMATE,
         )
     else:
         abort(403)

@@ -12,8 +12,8 @@
     };
 
     $(window).on('load', function() {
-        $(".table td").css("font-size", "12px");
-        $(".table th").css("font-size", "12px");
+        $(".table td").css("font-size", "10px");
+        $(".table th").css("font-size", "10px");
         $(".table td").css("white-space", "normal");
         $(".table td").css("text-align", "center");
         $(".table th").css("text-align", "center");
@@ -88,13 +88,13 @@
                 <td style='background-color: gray'></td>
                 {% endif %}
 
-                { % if candidates["gobernor"].enabled %}
+                {% if candidates["gobernor"].enabled %}
                 <td class="result">
-                    { { candidates["gobernor"].count }}
+                    {{ candidates["gobernor"].count }}
                 </td>
-                { % else %}
+                {% else %}
                 <td style='background-color: gray'></td>
-                { % endif %}
+                {% endif %}
 
                 {% if candidates["diputado"].enabled %}
                 <td class="result">
@@ -104,23 +104,29 @@
                 <td style='background-color: gray'></td>
                 {% endif %}
 
-                { % if candidates["senador"].enabled %}
+                {% if candidates["senador"].enabled %}
                 <td class="result">
-                    { { candidates["senador"].count }}
+                    {{ candidates["senador"].count }}
                 </td>
-                { % else %}
+                {% else %}
                 <td style='background-color: gray'></td>
-                { % endif %}
+                {% endif %}
 
-                <td style='background-color: gray'></td>
-
-                { % if candidates["general"].enabled %}
+                {% if candidates["intendente"].enabled %}
                 <td class="result">
-                    { { candidates["general"].count }}
+                    {{ candidates["intendente"].count }}
                 </td>
-                { % else %}
+                {% else %}
                 <td style='background-color: gray'></td>
-                { % endif %}
+                {% endif %}
+
+                {% if candidates["general"].enabled %}
+                <td class="result">
+                    {{ candidates["general"].count }}
+                </td>
+                {% else %}
+                <td style='background-color: gray'></td>
+                {% endif %}
 
             </tr>
 
@@ -147,7 +153,7 @@
                 </td>
 
                 <td class="result">
-                    { { other_results["blank"]["gobernor"]["count"] }}
+                    {{ other_results["blank"]["gobernor"]["count"] }}
                 </td>
 
                 <td class="result">
@@ -155,13 +161,15 @@
                 </td>
 
                 <td class="result">
-                    { { other_results["blank"]["senador"]["count"] }}
+                    {{ other_results["blank"]["senador"]["count"] }}
                 </td>
 
-                <td style='background-color: gray'></td>
+                <td class="result">
+                    {{ other_results["blank"]["intendente"]["count"] }}
+                </td>
 
                 <td class="result">
-                    { { other_results["blank"]["general"]["count"] }}
+                    {{ other_results["blank"]["general"]["count"] }}
                 </td>
 
             </tr>
@@ -173,7 +181,7 @@
                 </td>
 
                 <td class="result">
-                    { { other_results["nulled"]["gobernor"]["count"] }}
+                    {{ other_results["nulled"]["gobernor"]["count"] }}
                 </td>
 
                 <td class="result">
@@ -181,13 +189,15 @@
                 </td>
 
                 <td class="result">
-                    { {  other_results["nulled"]["senador"]["count"] }}
+                    {{  other_results["nulled"]["senador"]["count"] }}
                 </td>
 
-                <td style='background-color: gray'></td>
+                <td class="result">
+                    {{  other_results["nulled"]["intendente"]["count"] }}
+                </td>
 
                 <td class="result">
-                    { { other_results["nulled"]["general"]["count"] }}
+                    {{ other_results["nulled"]["general"]["count"] }}
                 </td>
 
             </tr>
@@ -199,7 +209,7 @@
                 </td>
 
                 <td class="result">
-                    { { other_results["recurrent"]["gobernor"]["count"] }}
+                    {{ other_results["recurrent"]["gobernor"]["count"] }}
                 </td>
 
                 <td class="result">
@@ -207,13 +217,15 @@
                 </td>
 
                 <td class="result">
-                    { { other_results["recurrent"]["senador"]["count"] }}
+                    {{ other_results["recurrent"]["senador"]["count"] }}
                 </td>
 
-                <td style='background-color: gray'></td>
+                <td class="result">
+                    {{ other_results["recurrent"]["intendente"]["count"] }}
+                </td>
 
                 <td class="result">
-                    { { other_results["recurrent"]["general"]["count"] }}
+                    {{ other_results["recurrent"]["general"]["count"] }}
                 </td>
 
             </tr>
@@ -225,7 +237,7 @@
                 </td>
 
                 <td class="result">
-                    { { other_results["refuted"]["gobernor"]["count"] }}
+                    {{ other_results["refuted"]["gobernor"]["count"] }}
                 </td>
 
                 <td class="result">
@@ -233,13 +245,15 @@
                 </td>
 
                 <td class="result">
-                    { { other_results["refuted"]["senador"]["count"] }}
+                    {{ other_results["refuted"]["senador"]["count"] }}
                 </td>
 
-                <td style='background-color: gray'></td>
+                <td class="result">
+                    {{ other_results["refuted"]["intendente"]["count"] }}
+                </td>
 
                 <td class="result">
-                    { { other_results["refuted"]["general"]["count"] }}
+                    {{ other_results["refuted"]["general"]["count"] }}
                 </td>
 
             </tr>

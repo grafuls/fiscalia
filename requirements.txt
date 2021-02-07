@@ -6,3 +6,4 @@ flask-mongoengine==0.9.5
 gunicorn==19.7.1
 mongoengine==0.16.2
 geocoder==1.38.1
+email-validator==1.1.2

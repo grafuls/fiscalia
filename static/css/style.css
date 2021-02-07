@@ -56,6 +56,10 @@ tbody tr:nth-child(odd) {
   text-overflow: ellipsis;
 }
 
+.tdintencion, .tdorder{
+  text-align: right;
+}
+
 #canvas-holder, #grand {
   width: 80%;
   height: 80%;

@@ -13,12 +13,12 @@ PARTIES = [
 ]
 
 VOTES_MATRIX = [
-    [1, 1],
-    [1, 1],
-    [1, 1],
-    [1, 1],
-    [1, 1],
-    [1, 1],
+    [1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1],
 ]
 
 CANDIDATES = ["president", "gobernor", "diputado", "senador", "intendente", "general"]
@@ -73,5 +73,3 @@ USERS = [
         }
     }
 ]
-
-ENABLE_ULTIMATE = True

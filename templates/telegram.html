@@ -13,8 +13,8 @@
     };
 
     $(window).on('load', function() {
-        $(".table td").css("font-size", "12px");
-        $(".table th").css("font-size", "12px");
+        $(".table td").css("font-size", "10px");
+        $(".table th").css("font-size", "10px");
         $(".table td").css("white-space", "normal");
         $(".table td").css("text-align", "center");
         $(".table th").css("text-align", "center");
@@ -96,13 +96,13 @@
                 <td style='background-color: gray'></td>
                 {% endif %}
 
-                { % if party.votes.gobernor.enabled %}
+                {% if party.votes.gobernor.enabled %}
                 <td class="cansubmit" contenteditable="true" id="{{ party.id }}.gobernor" class="result">
-                    { { party.votes.gobernor.count }}
+                    {{ party.votes.gobernor.count }}
                 </td>
-                { % else %}
+                {% else %}
                 <td style='background-color: gray'></td>
-                { % endif %}
+                {% endif %}
 
                 {% if party.votes.diputado.enabled %}
                 <td class="cansubmit" contenteditable="true" id="{{ party.id }}.diputado">
@@ -112,23 +112,29 @@
                 <td style='background-color: gray'></td>
                 {% endif %}
 
-                { % if party.votes.senador.enabled %}
+                {% if party.votes.senador.enabled %}
                 <td class="cansubmit" contenteditable="true" id="{{ party.id }}.senador" class="result">
-                    { { party.votes.senador.count }}
+                    {{ party.votes.senador.count }}
                 </td>
-                { % else %}
+                {% else %}
                 <td style='background-color: gray'></td>
-                { % endif %}
-                <td>{ { party.votes.intendente.count }}</td>
-                <td style='background-color: gray'></td>
+                {% endif %}
 
-                { % if party.votes.general.enabled %}
-                <td class="cansubmit" contenteditable="true" id="{{ party.id }}.general" class="result">
-                    { { party.votes.general.count }}
+                {% if party.votes.intendente.enabled %}
+                <td class="cansubmit" contenteditable="true" id="{{ party.id }}.intendente" class="result">
+                    {{ party.votes.intendente.count }}
                 </td>
-                { % else %}
+                {% else %}
                 <td style='background-color: gray'></td>
-                { % endif %}
+                {% endif %}
+
+                {% if party.votes.general.enabled %}
+                <td class="cansubmit" contenteditable="true" id="{{ party.id }}.general" class="result">
+                    {{ party.votes.general.count }}
+                </td>
+                {% else %}
+                <td style='background-color: gray'></td>
+                {% endif %}
             </tr>
 
             {% endfor %}
@@ -154,7 +160,7 @@
                 </td>
 
                 <td class="cansubmit" contenteditable="true" id="blank.{{ other_votes.id }}.gobernor" class="result">
-                    { { other_votes.blank.gobernor.count }}
+                    {{ other_votes.blank.gobernor.count }}
                 </td>
 
                 <td class="cansubmit" contenteditable="true" id="blank.{{ other_votes.id }}.diputado" class="result">
@@ -162,15 +168,15 @@
                 </td>
 
                 <td class="cansubmit" contenteditable="true" id="blank.{{ other_votes.id }}.senador" class="result">
-                    { { other_votes.blank.senador.count }}
+                    {{ other_votes.blank.senador.count }}
                 </td>
 
-
-                <td>{ { other_votes.blank.intendente.count }}</td>
-                <td style='background-color: gray'></td>
+                <td class="cansubmit" contenteditable="true" id="blank.{{ other_votes.id }}.intendente" class="result">
+                    {{ other_votes.blank.intendente.count }}
+                </td>
 
                 <td class="cansubmit" contenteditable="true" id="blank.{{ other_votes.id }}.general" class="result">
-                    { { other_votes.blank.general.count }}
+                    {{ other_votes.blank.general.count }}
                 </td>
 
             </tr>
@@ -182,7 +188,7 @@
                 </td>
 
                 <td class="cansubmit" contenteditable="true" id="nulled.{{ other_votes.id }}.gobernor" class="result">
-                    { { other_votes.nulled.gobernor.count }}
+                    {{ other_votes.nulled.gobernor.count }}
                 </td>
 
                 <td class="cansubmit" contenteditable="true" id="nulled.{{ other_votes.id }}.diputado" class="result">
@@ -190,15 +196,15 @@
                 </td>
 
                 <td class="cansubmit" contenteditable="true" id="nulled.{{ other_votes.id }}.senador" class="result">
-                    { { other_votes.nulled.senador.count }}
+                    {{ other_votes.nulled.senador.count }}
                 </td>
 
-
-                <td>{ { other_votes.nulled.intendente.count }}</td>
-                <td style='background-color: gray'></td>
+                <td class="cansubmit" contenteditable="true" id="nulled.{{ other_votes.id }}.intendente" class="result">
+                    {{ other_votes.nulled.intendente.count }}
+                </td>
 
                 <td class="cansubmit" contenteditable="true" id="nulled.{{ other_votes.id }}.general" class="result">
-                    { { other_votes.nulled.general.count }}
+                    {{ other_votes.nulled.general.count }}
                 </td>
 
             </tr>
@@ -210,7 +216,7 @@
                 </td>
 
                 <td class="cansubmit" contenteditable="true" id="recurrent.{{ other_votes.id }}.gobernor" class="result">
-                    { { other_votes.recurrent.gobernor.count }}
+                    {{ other_votes.recurrent.gobernor.count }}
                 </td>
 
                 <td class="cansubmit" contenteditable="true" id="recurrent.{{ other_votes.id }}.diputado" class="result">
@@ -218,15 +224,15 @@
                 </td>
 
                 <td class="cansubmit" contenteditable="true" id="recurrent.{{ other_votes.id }}.senador" class="result">
-                    { { other_votes.recurrent.senador.count }}
+                    {{ other_votes.recurrent.senador.count }}
                 </td>
 
-
-                <td>{{ other_votes.recurrent.intendente.count }}</td>
-                <td style='background-color: gray'></td>
+                <td class="cansubmit" contenteditable="true" id="recurrent.{{ other_votes.id }}.intendente" class="result">
+                    {{ other_votes.recurrent.senador.count }}
+                </td>
 
                 <td class="cansubmit" contenteditable="true" id="recurrent.{{ other_votes.id }}.general" class="result">
-                    { { other_votes.recurrent.general.count }}
+                    {{ other_votes.recurrent.general.count }}
                 </td>
 
             </tr>
@@ -238,7 +244,7 @@
                 </td>
 
                 <td class="cansubmit" contenteditable="true" id="refuted.{{ other_votes.id }}.gobernor" class="result">
-                    { { other_votes.refuted.gobernor.count }}
+                    {{ other_votes.refuted.gobernor.count }}
                 </td>
 
                 <td class="cansubmit" contenteditable="true" id="refuted.{{ other_votes.id }}.diputado" class="result">
@@ -246,15 +252,15 @@
                 </td>
 
                 <td class="cansubmit" contenteditable="true" id="refuted.{{ other_votes.id }}.senador" class="result">
-                    { { other_votes.refuted.senador.count }}
+                    {{ other_votes.refuted.senador.count }}
                 </td>
 
-
-                <td>{ { other_votes.refuted.intendente.count }}</td>
-                <td style='background-color: gray'></td>
+                <td class="cansubmit" contenteditable="true" id="refuted.{{ other_votes.id }}.intendente" class="result">
+                    {{ other_votes.refuted.intendente.count }}
+                </td>
 
                 <td class="cansubmit" contenteditable="true" id="refuted.{{ other_votes.id }}.general" class="result">
-                    { { other_votes.refuted.general.count }}
+                    {{ other_votes.refuted.general.count }}
                 </td>
 
             </tr>
