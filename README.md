@@ -10,7 +10,7 @@
    ```bash
    > virtualenv devel
    > source devel/bin/activate
-   (devel) > pip install -r requirements
+   (devel) > pip install -r requirements.txt
    ```
 
    - Instantiate Mongo DB on a separate terminal or demonize with -d 
