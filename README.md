@@ -4,8 +4,14 @@
    - Prerequisites:
        * [virtualenv](https://virtualenv.pypa.io/en/latest/installation.html)
        * [podman](https://podman.io/getting-started/installation.html)
+       * [python > 3.6](https://www.python.org/downloads/)
 
-
+   - Clone this repository and navigate to it's directory
+   ```bash
+   > git clone https://github.con/grafuls/fiscalia
+   > cd fiscalia
+   ```
+     
    - Create python virtual environment, source and install dependencies
    ```bash
    > virtualenv devel
